@@ -61,7 +61,8 @@ function msavatar({skin, spritew, spriteh, n, m, anims}) {
 		},
 		showText: (text) => $textbox.text(text).show(),
 		hideText: () => $textbox.hide(),
-		setName: (name) => $namebox.text(name)
+		setName: (name) => $namebox.text(name),
+		elem: $floaty
 	}
 }
 

@@ -79,3 +79,11 @@ body {
 	margin-left: -12px;
 }
 
+.msctmenu {
+	width: 150px;
+}
+
+.msctmenu button {
+	width: 150px;
+	box-sizing: border-box;
+}

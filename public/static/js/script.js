@@ -9,6 +9,7 @@ $(document).ready(() => {
 	let users = [];
 
 	let myname, myskin, myroom;
+	let iammod = false;
 
 	const socket = io();
 	const skins = ['red'];
@@ -17,6 +18,20 @@ $(document).ready(() => {
 	startmenu.hide();
 	$('body').append(startmenu);
 	$('#start-btn').click(() => startmenu.toggle());
+
+	let ctmenu = $('<div>')
+		.addClass('window')
+		.addClass('msctmenu')
+		.css({position: 'fixed'})
+		.append($('<button> Assholeify </button>')
+			.click(() => socket.emit('message', `Hey ${users.filter(x=>x.id==ctmenu_subject)[0].name}! You're a fucking asshole.`)));
+
+	ctmenu.hide();
+	$('body').append(ctmenu);
+
+	let ctmenu_subject = null;
+
+	$('body').click(() => ctmenu.hide());
 
 	let win = mswindow({
 		title: 'Join the chat',
@@ -82,6 +97,9 @@ $(document).ready(() => {
 					name: myname,
 					skin: myskin
 				});
+			} else
+			if(cmd == 'modauth') {
+				socket.emit('modauth', arg);
 			} else {
 				msalert("Bad command!");
 			}
@@ -99,7 +117,7 @@ $(document).ready(() => {
 			for(i = 0, j = 0; i < s2.length && j < s1.length; ++i) {
 				while(j < s1.length && s1[j].id < s2[i].id)
 					rez.push(s1[j++]);
-				if(s1[j].id == s2[i].id) ++j;
+				if(j < s1.length && s1[j].id == s2[i].id) ++j;
 			}
 			for(; j < s1.length; ++j) rez.push(s1[j]);
 			return rez;
@@ -108,9 +126,19 @@ $(document).ready(() => {
 		let joined = setremove(upd, users);
 		let left = setremove(users, upd);
 		let stayed = setremove(users, left);
-		let stayed_changes = setremove(upd, left);
+		let stayed_changes = setremove(setremove(upd, left), joined);
 		for(let user of joined) {
 			user.avatar = bonzipreset();
+			user.avatar.elem.on('contextmenu', e => {
+				e.preventDefault();
+				ctmenu_subject = user.id;
+				ctmenu.css({
+					top: e.clientY + 'px',
+					left: e.clientX + 'px'
+				});
+				console.log('ctmenu shown');
+				ctmenu.toggle();
+			});
 			user.avatar.setName(user.name);
 			user.avatar.play('join');
 		}
@@ -129,6 +157,23 @@ $(document).ready(() => {
 		users = [...joined, ...stayed];
 		users.sort(cmpfn);
 	})
+
+	socket.on('alert', msg => {
+		msalert(msg)
+	});
+
+	socket.on('modsetup', () => {
+		ctmenu.append(
+			$('<button> Get IP </button>').click(() => {
+				socket.emit('getip', ctmenu_subject);
+			})
+		).append(
+			$('<button> Ban user </button>').click(() => {
+				socket.emit('ban', ctmenu_subject);
+			})
+		);
+		console.log('mod setup')
+	});
 
 	socket.on('message', data => {
 		let u = users.filter(x => x.id == data.id)[0];
