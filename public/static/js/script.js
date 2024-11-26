@@ -96,9 +96,10 @@ $(document).ready(() => {
 		const setremove = function(s1, s2) {
 			let rez = [];
 			let i, j;
-			for(i = 0, j = 0; i < s2.length && j < s1.length; ++i, ++j) {
+			for(i = 0, j = 0; i < s2.length && j < s1.length; ++i) {
 				while(j < s1.length && s1[j].id < s2[i].id)
 					rez.push(s1[j++]);
+				if(s1[j].id == s2[i].id) ++j;
 			}
 			for(; j < s1.length; ++j) rez.push(s1[j]);
 			return rez;

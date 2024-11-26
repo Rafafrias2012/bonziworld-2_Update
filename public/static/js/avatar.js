@@ -41,6 +41,10 @@ function msavatar({skin, spritew, spriteh, n, m, anims}) {
 		ctx.drawImage(skin, sx, sy, spritew, spriteh, 0, 0, spritew, spriteh);
 	}
 
+	skin.onload = () => {
+		if(!animiid) drawframe(anims['idle'].frames[0]);
+	}
+
 	return {
 		destroy: () => $floaty.remove(),
 		play: (ai) => {
@@ -50,7 +54,7 @@ function msavatar({skin, spritew, spriteh, n, m, anims}) {
 				drawframe(anims[ai][0]);
 				animiid = setInterval(() => {
 					if(++counter >= anims[ai].frames.length)
-						return (clearInterval(animiid), resolve());
+						return (clearInterval(animiid), animiid = null, resolve());
 					drawframe(anims[ai].frames[counter]);
 				}, 1000/anims[ai].speed);
 			});
