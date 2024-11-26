@@ -103,7 +103,7 @@ io.on("connection", (socket) => {
 		if(!u.length) return socket.emit('alert', 'User not found!');
 		u = u[0];
 		if(u.perms >= user.perms) return socket.emit('alert', 'User has too high perms.');
-		socket.emit('alert', "User's ip: " + u[0].ip);
+		socket.emit('alert', "User's ip: " + u.ip);
 	});
 
 	// Handle user disconnect
