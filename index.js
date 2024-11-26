@@ -123,7 +123,7 @@ const db = new sqlite3.Database("stuff.db", (err) => {
 	console.log('Connected to the SQLite database.');
 
 	// Start the server
-	const PORT = 8000 || process.env.PORT;
+	const PORT = process.env.PORT || 8000;
 	server.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
 });
 
