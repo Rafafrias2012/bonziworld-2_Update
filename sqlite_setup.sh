@@ -20,6 +20,7 @@ CREATE TABLE IF NOT EXISTS banned_ips (
 CREATE TABLE mods (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	pass VARCHAR(255) UNIQUE NOT NULL
+	perms INT
 );
 
 -- Commit the changes
