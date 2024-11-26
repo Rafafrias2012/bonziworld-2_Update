@@ -1,5 +1,0 @@
-Host git-agr
-	HostName github.com
-	User git
-	IdentityFile ~/.ssh/agentr3d
-	IdentitiesOnly yes
