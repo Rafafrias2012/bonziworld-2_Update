@@ -52,13 +52,34 @@ io.on("connection", (socket) => {
 	});
 
 	// Handle "message" event
-	socket.on("message", (msg) => {
-		if(!msg) return;
-		if (user) {
-			let data = {id: user.id, message: msg};
-			users.forEach(u => u.room == user.room && u.socket.emit('message', data));
-		}
-	});
+socket.on("message", (msg) => {
+    if(!msg) return;
+    if (user) {
+        // Check if message is an image command
+        if(msg.startsWith('/image ')) {
+            const imageUrl = msg.slice(7).trim(); // Remove '/image ' from the start
+            
+            // Basic URL validation
+            const urlPattern = /^https?:\/\/.+\.(jpg|jpeg|png|gif|webp)$/i;
+            if(!urlPattern.test(imageUrl)) {
+                socket.emit('alert', 'Invalid image URL. Must end with jpg, jpeg, png, gif, or webp');
+                return;
+            }
+
+            // Send special image message type
+            let data = {
+                id: user.id,
+                message: imageUrl,
+                type: 'image'
+            };
+            users.forEach(u => u.room == user.room && u.socket.emit('message', data));
+        } else {
+            // Regular message
+            let data = {id: user.id, message: msg, type: 'text'};
+            users.forEach(u => u.room == user.room && u.socket.emit('message', data));
+        }
+    }
+});
 
 	socket.on("modauth", (pass) => {
 		db.get('SELECT perms FROM mods WHERE pass = ?', [pass], (err, row) => {
