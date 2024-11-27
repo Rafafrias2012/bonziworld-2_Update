@@ -176,11 +176,27 @@ $(document).ready(() => {
 	});
 
 	socket.on('message', data => {
+	if(data.type === 'image') {
+        // Create image element
+        const img = document.createElement('img');
+        img.src = data.message;
+        img.style.maxWidth = '300px'; // Limit image size
+        img.style.maxHeight = '300px';
+        
+        // Add image to chat
+        const chatWindow = document.querySelector('#chat-window'); // Make sure you have a chat window element
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'message';
+        messageDiv.innerHTML = `<strong>${getUserName(data.id)}:</strong> `;
+        messageDiv.appendChild(img);
+        chatWindow.appendChild(messageDiv);
+	} else {
 		let u = users.filter(x => x.id == data.id)[0];
 		speak.play(data.message, u.id, {}, () => {
 			u.avatar.hideText();
 		}, () => {
 			u.avatar.showText(data.message);
 		});
+	     }
 	});
 });
